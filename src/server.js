@@ -22,6 +22,6 @@ app.use((err, _req, res, _next) => {
   return res.status(500).json({ error: err.message || 'Internal error' });
 });
 
-app.listen(port, () => {
-  console.log(`Storage API listening on http://localhost:${port}`);
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Storage API listening on port ${port}`);
 });
