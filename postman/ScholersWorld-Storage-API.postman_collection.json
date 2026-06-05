@@ -1,0 +1,86 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-scholersworld-storage",
+    "name": "ScholersWorld Storage API",
+    "description": "Test the Node S3 upload API locally.\n\n1. Start the server: `npm start` in BackendAPIs\n2. Set collection variables: `host`, `port`, `projectId`\n3. Run **Health** first, then **Upload file** (pick a file in Body → form-data)\n4. Copy `files[0].key` from the upload response into `objectKey`, then run **Get file URL**",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "host", "value": "localhost" },
+    { "key": "port", "value": "3000" },
+    { "key": "projectId", "value": "demo-project" },
+    {
+      "key": "objectKey",
+      "value": "",
+      "description": "Paste full S3 key from upload response, e.g. projects/demo-project/images/..."
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://{{host}}:{{port}}/health",
+          "protocol": "http",
+          "host": ["{{host}}"],
+          "port": "{{port}}",
+          "path": ["health"]
+        },
+        "description": "Should return JSON with ok: true."
+      },
+      "response": []
+    },
+    {
+      "name": "Upload file",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "description": "Single file (image, PDF, video, etc.). Field name must be `file` or `files`.",
+              "type": "file",
+              "src": []
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://{{host}}:{{port}}/api/projects/{{projectId}}/upload",
+          "protocol": "http",
+          "host": ["{{host}}"],
+          "port": "{{port}}",
+          "path": ["api", "projects", "{{projectId}}", "upload"]
+        },
+        "description": "201 response includes files[].key, files[].url, category, etc."
+      },
+      "response": []
+    },
+    {
+      "name": "Get file URL (refresh link)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://{{host}}:{{port}}/api/projects/{{projectId}}/files/url?key={{objectKey}}",
+          "protocol": "http",
+          "host": ["{{host}}"],
+          "port": "{{port}}",
+          "path": ["api", "projects", "{{projectId}}", "files", "url"],
+          "query": [
+            {
+              "key": "key",
+              "value": "{{objectKey}}",
+              "description": "Full S3 key; must start with projects/{{projectId}}/"
+            }
+          ]
+        },
+        "description": "Set `objectKey` to the key returned from Upload. Opens a fresh presigned or public URL."
+      },
+      "response": []
+    }
+  ]
+}
